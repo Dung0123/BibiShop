@@ -1,6 +1,3 @@
-### Dự án bán điện thoại IPhone Poly Mobile
-# su24-sd35-ban-dien-thoai-polymobile
-
 
 ## Yêu cầu xây dựng theo cấu trúc thư mục như sau
 
