@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Chi tiết Đợt giảm giá</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+  <h2 class="text-center mb-4">Chi tiết Đợt giảm giá</h2>
+  <div class="card">
+    <br>
+    <div class="card-body">
+      <!-- Display Messages -->
+      <div th:if="${message}" class="alert"
+           th:classappend="${messageType == 'success' ? 'alert-success' : 'alert-danger'}">
+        <span th:text="${message}"></span>
+      </div>
+
+      <form th:action="@{/admin/dotgiamgia/update/{id}(id=${updateDotagiamgia.id})}"
+            th:object="${updateDotagiamgia}" method="post" class="row g-4">
+
+        <!-- Left Column Card -->
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="tenDotGiamGia" class="form-label">Tên đợt giảm giá</label>
+            <input type="text" class="form-control" id="tenDotGiamGia" th:field="*{ten}" placeholder="Enter event name" required>
+            <div id="errorTenDotGiamGia" class="error-message text-danger"></div>
+          </div>
+          <div class="mb-3">
+            <label for="maDotGiamGia" class="form-label">Mã đợt giảm giá</label>
+            <input type="text" class="form-control" id="maDotGiamGia" th:field="*{ma}" placeholder="Enter event code" required>
+            <div id="errorMaDotGiamGia" class="error-message text-danger"></div>
+          </div>
+          <div class="mb-3">
+            <label for="giaTriToiThieu" class="form-label">Giá trị đơn hàng tối thiểu</label>
+            <input type="number" class="form-control" id="giaTriToiThieu" th:field="*{donToiThieu}" placeholder="Enter minimum order value" required>
+            <div id="errorGiaTriToiThieu" class="error-message text-danger"></div>
+          </div>
+          <div class="mb-3">
+            <label for="giaTriGiamGia" class="form-label">Giá trị giảm</label>
+            <input type="number" class="form-control" id="giaTriGiamGia" th:field="*{giaTriGiam}" placeholder="Enter discount value" required>
+            <div id="errorGiaTriGiamGia" class="error-message text-danger"></div>
+          </div>
+          <div class="mb-3">
+            <label for="giaTriGiamToiDa" class="form-label">Giá trị giảm tối đa</label>
+            <input type="number" class="form-control" id="giaTriGiamToiDa" th:field="*{giamToiDa}" placeholder="Enter maximum discount value" required>
+            <div id="errorGiaTriGiamToiDa" class="error-message text-danger"></div>
+          </div>
+        </div>
+
+        <!-- Right Column Card -->
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="soLuong" class="form-label">Số lượng</label>
+            <input type="number" class="form-control" id="soLuong" th:field="*{soLuong}" placeholder="Enter total quantity" required>
+            <div id="errorSoLuong" class="error-message text-danger"></div>
+          </div>
+          <div class="mb-3">
+            <label for="ngayBatDau" class="form-label">Ngày bắt đầu</label>
+            <input type="date" class="form-control" id="ngayBatDau" th:field="*{ngayBatDau}" required>
+            <div id="errorNgayBatDau" class="error-message text-danger"></div>
+          </div>
+          <div class="mb-3">
+            <label for="ngayKetThuc" class="form-label">Ngày kết thúc</label>
+            <input type="date" class="form-control" id="ngayKetThuc" th:field="*{ngayKetThuc}" required>
+            <div id="errorNgayKetThuc" class="error-message text-danger"></div>
+          </div>
+          <div class="mb-3">
+            <label for="trangThai" class="form-label">Trạng thái</label>
+            <select class="form-select" id="trangThai" th:field="*{trangThai}">
+              <option value="1">Hoạt động</option>
+              <option value="0">Ngừng hoạt động</option>
+            </select>
+            <div id="errorTrangThai" class="error-message text-danger"></div>
+          </div>
+          <div class="mb-3">
+            <label for="hinhThucGiamGia" class="form-label">Hình thức giảm giá</label>
+            <select class="form-select" id="hinhThucGiamGia" th:field="*{hinhThucGiamGiaId}">
+              <option value="1" th:selected="${hinhThucGiamGiaId == 0}" >Chuyển Khoản</option>
+              <option value="0" th:selected="${hinhThucGiamGiaId == 1}">Tiền mặt</option>
+              <option value="2" th:selected="${hinhThucGiamGiaId == 2}" >Tất cả</option>
+            </select>
+            <div id="errorHinhThucGiamGia" class="error-message text-danger"></div>
+          </div>
+        </div>
+        <div class="mt-4 text-center">
+          <button type="submit" class="btn btn-dark me-2">Cập nhật</button>
+          <a th:href="@{/admin/dotgiamgia/list}" class="btn btn-secondary text-center">Hủy</a>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script>
+    document.querySelectorAll('input, select').forEach(function (element) {
+      element.addEventListener('input', validateAllFields);
+      element.addEventListener('blur', validateAllFields);
+    });
+
+    function validateAllFields() {
+      let isValid = true;
+      document.querySelectorAll('input, select').forEach(function (field) {
+        const value = field.value.trim();
+        let errorMessage = '';
+
+        // Kiểm tra các trường hợp nhập liệu trống và điều kiện cụ thể
+        switch (field.id) {
+          case 'tenDotGiamGia':
+            if (!value) {
+              errorMessage = "Tên đợt giảm giá không được để trống.";
+              isValid = false;
+            } else if (value.length > 50) {
+              errorMessage = "Tên đợt giảm giá không được dài hơn 50 ký tự.";
+              isValid = false;
+            }
+            break;
+          case 'maDotGiamGia':
+            if (!value) {
+              errorMessage = "Mã đợt giảm giá không được để trống.";
+              isValid = false;
+            }
+            break;
+          case 'giaTriToiThieu':
+            const minOrderValue = parseFloat(value);
+            if (isNaN(minOrderValue) || minOrderValue <= 0) {
+              errorMessage = "Giá trị đơn tối thiểu phải lớn hơn 0.";
+              isValid = false;
+            }
+            break;
+          case 'giaTriGiamGia':
+            const discountValue = parseFloat(value);
+            if (isNaN(discountValue) || discountValue <= 0) {
+              errorMessage = "Giá trị giảm phải lớn hơn 0.";
+              isValid = false;
+            }
+            break;
+          case 'giaTriGiamToiDa':
+            const maxDiscountValue = parseFloat(value);
+            const discountInputValue = parseFloat(document.getElementById('giaTriGiamGia').value);
+            if (isNaN(maxDiscountValue) || maxDiscountValue <= 0) {
+              errorMessage = "Giá trị giảm tối đa phải lớn hơn 0.";
+              isValid = false;
+            } else if (discountInputValue > maxDiscountValue) {
+              errorMessage = "Giá trị giảm không được lớn hơn giá trị giảm tối đa.";
+              isValid = false;
+            }
+            break;
+          case 'soLuong':
+            const totalQuantity = parseInt(value);
+            if (isNaN(totalQuantity) || totalQuantity <= 0 || !Number.isInteger(totalQuantity)) {
+              errorMessage = "Tổng số lượng phải là số nguyên dương.";
+              isValid = false;
+            }
+            break;
+          case 'ngayBatDau':
+            const startDateValue = new Date(value);
+            const endDateValue = document.getElementById('ngayKetThuc').value;
+            if (!value || isNaN(startDateValue.getTime())) {
+              errorMessage = "Ngày bắt đầu áp dụng không được để trống.";
+              isValid = false;
+            } else if (endDateValue) {
+              const endDate = new Date(endDateValue);
+              if (startDateValue >= endDate) {
+                errorMessage = "Ngày bắt đầu phải nhỏ hơn ngày kết thúc.";
+                isValid = false;
+              }
+            }
+            break;
+          case 'ngayKetThuc':
+            const endDate = new Date(value);
+            const startDateCheck = document.getElementById('ngayBatDau').value;
+            if (!value || isNaN(endDate.getTime())) {
+              errorMessage = "Ngày kết thúc không được để trống.";
+              isValid = false;
+            } else if (startDateCheck) {
+              const startDate = new Date(startDateCheck);
+              if (startDate >= endDate) {
+                errorMessage = "Ngày bắt đầu phải nhỏ hơn ngày kết thúc.";
+                isValid = false;
+              }
+            }
+            break;
+        }
+
+        showFieldError(field, errorMessage);
+      });
+
+      // Hiển thị thông báo nếu tất cả các trường đều hợp lệ
+      // if (isValid) {
+      //   alert('Hợp lệ.');
+      // }
+    }
+
+    function showFieldError(field, message) {
+      const errorElement = document.getElementById('error' + field.id.charAt(0).toUpperCase() + field.id.slice(1));
+      if (message) {
+        errorElement.textContent = message;
+      } else {
+        errorElement.textContent = '';
+      }
+    }
+  </script>
+
+</div>
+</body>
+</html>
